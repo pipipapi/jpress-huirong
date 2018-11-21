@@ -18,7 +18,9 @@ package io.jpress.web.commons.controller;
 import com.jfinal.core.JFinal;
 import com.jfinal.upload.UploadFile;
 import io.jboot.utils.FileUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.annotation.RequestMapping;
+import io.jpress.JPressConsts;
 import io.jpress.commons.utils.AliyunOssUtils;
 import io.jpress.commons.utils.AttachmentUtils;
 import io.jpress.model.Attachment;
@@ -60,29 +62,49 @@ public class CKEditorController extends UserControllerBase {
             }
         }
 
-        String path = AttachmentUtils.moveFile(uploadFile);
+        String path = AttachmentUtils.moveFile(uploadFile).replace("\\", "/");
+        boolean enable = Boolean.parseBoolean(JPressConsts.OSS_KEY_ENABLE);
+        if (enable == false || StrUtils.isBlank(path)) {
+            Attachment attachment = new Attachment();
+            attachment.setUserId(getLoginedUser().getId());
+            attachment.setTitle(uploadFile.getOriginalFileName());
+            attachment.setPath(path);
+            attachment.setSuffix(FileUtils.getSuffix(uploadFile.getFileName()));
+            attachment.setMimeType(uploadFile.getContentType());
 
-        AliyunOssUtils.upload(path, AttachmentUtils.file(path));
+            if (attachment.save()) {
 
-        Attachment attachment = new Attachment();
-        attachment.setUserId(getLoginedUser().getId());
-        attachment.setTitle(uploadFile.getOriginalFileName());
-        attachment.setPath(path.replace("\\", "/"));
-        attachment.setSuffix(FileUtils.getSuffix(uploadFile.getFileName()));
-        attachment.setMimeType(uploadFile.getContentType());
-
-        if (attachment.save()) {
-
-            /**
-             * {"fileName":"1.jpg","uploaded":1,"url":"\/userfiles\/images\/1.jpg"}
-             */
-            Map map = new HashMap();
-            map.put("fileName", attachment.getTitle());
-            map.put("uploaded", 1);
-            map.put("url", JFinal.me().getContextPath() + attachment.getPath());
-            renderJson(map);
-        } else {
-            renderText("系统错误");
+                /**
+                 * {"fileName":"1.jpg","uploaded":1,"url":"\/userfiles\/images\/1.jpg"}
+                 */
+                Map map = new HashMap();
+                map.put("fileName", attachment.getTitle());
+                map.put("uploaded", 1);
+                map.put("url", JFinal.me().getContextPath() + attachment.getPath());
+                renderJson(map);
+            } else {
+                renderText("系统错误");
+            }
+        }else {
+            boolean success = AliyunOssUtils.upload(path, AttachmentUtils.file(path));
+            if(success) {
+                String ossurl = JPressConsts.OSS_KEY_ENDPOINT;
+                if (ossurl.contains("http://")) {
+                    ossurl = ossurl.replace("http://", "http://" + JPressConsts.OSS_KEY_BUCKETNAME + ".");
+                }
+                if (ossurl.contains("https://")) {
+                    ossurl = ossurl.replace("https://", "https://" + JPressConsts.OSS_KEY_BUCKETNAME + ".");
+                }
+                ossurl = ossurl + path;
+                Map map = new HashMap();
+                map.put("fileName", uploadFile.getOriginalFileName());
+                map.put("uploaded", 1);
+                map.put("url", ossurl);
+                renderJson(map);
+            }else{
+                Map map = new HashMap();
+                map.put("uploaded", 0);
+            }
         }
     }
 

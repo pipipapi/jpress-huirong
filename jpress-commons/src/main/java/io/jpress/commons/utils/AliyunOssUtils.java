@@ -15,27 +15,26 @@
  */
 package io.jpress.commons.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.model.GetObjectRequest;
+import com.aliyun.oss.model.PutObjectResult;
 import com.jfinal.kit.LogKit;
 import com.jfinal.log.Log;
 import io.jboot.utils.StrUtils;
+import io.jpress.JPressConsts;
 import io.jpress.JPressOptions;
 
 import java.io.File;
+
+import static io.jpress.JPressConsts.*;
 
 
 public class AliyunOssUtils {
 
     static Log log = Log.getLog(AliyunOssUtils.class);
 
-
-    private static final String KEY_ENABLE = "attachment_aliyunoss_enable";
-    private static final String KEY_ENDPOINT = "attachment_aliyunoss_endpoint";
-    private static final String KEY_ACCESSKEYID = "attachment_aliyunoss_accesskeyid";
-    private static final String KEY_ACCESSKEYSECRET = "attachment_aliyunoss_accesskeysecret";
-    private static final String KEY_BUCKETNAME = "attachment_aliyunoss_bucketname";
 
     /**
      * 同步本地文件到阿里云OSS
@@ -46,16 +45,11 @@ public class AliyunOssUtils {
      */
     public static boolean upload(String path, File file) {
 
-        boolean enable = JPressOptions.getAsBool(KEY_ENABLE);
-
-        if (enable == false || StrUtils.isBlank(path)) {
-            return false;
-        }
 
         path = removeFileSeparator(path);
 
 
-        String ossBucketName = JPressOptions.get(KEY_BUCKETNAME);
+        String ossBucketName = JPressConsts.OSS_KEY_BUCKETNAME;
         OSSClient ossClient = newOSSClient();
 
         try {
@@ -92,14 +86,14 @@ public class AliyunOssUtils {
      * @return
      */
     public static boolean download(String path, File toFile) {
-        boolean enable = JPressOptions.getAsBool(KEY_ENABLE);
+        boolean enable = Boolean.parseBoolean(JPressConsts.OSS_KEY_ENABLE);
 
         if (enable == false || StrUtils.isBlank(path)) {
             return false;
         }
 
         path = removeFileSeparator(path);
-        String ossBucketName = JPressOptions.get(KEY_BUCKETNAME);
+        String ossBucketName = JPressConsts.OSS_KEY_BUCKETNAME;
         OSSClient ossClient = newOSSClient();
         try {
 
@@ -124,9 +118,9 @@ public class AliyunOssUtils {
     }
 
     private static OSSClient newOSSClient() {
-        String endpoint = JPressOptions.get(KEY_ENDPOINT);
-        String accessId = JPressOptions.get(KEY_ACCESSKEYID);
-        String accessKey = JPressOptions.get(KEY_ACCESSKEYSECRET);
+        String endpoint = JPressConsts.OSS_KEY_ENDPOINT;
+        String accessId = JPressConsts.OSS_KEY_ACCESSKEYID;
+        String accessKey = JPressConsts.OSS_KEY_ACCESSKEYSECRET;
         return new OSSClient(endpoint, new DefaultCredentialProvider(accessId, accessKey), null);
     }
 

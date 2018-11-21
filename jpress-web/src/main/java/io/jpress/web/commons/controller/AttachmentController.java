@@ -18,7 +18,9 @@ package io.jpress.web.commons.controller;
 import com.jfinal.kit.Ret;
 import com.jfinal.upload.UploadFile;
 import io.jboot.utils.FileUtils;
+import io.jboot.utils.StrUtils;
 import io.jboot.web.controller.annotation.RequestMapping;
+import io.jpress.JPressConsts;
 import io.jpress.commons.utils.AliyunOssUtils;
 import io.jpress.commons.utils.AttachmentUtils;
 import io.jpress.model.Attachment;
@@ -26,6 +28,7 @@ import io.jpress.service.AttachmentService;
 import io.jpress.web.base.UserControllerBase;
 
 import javax.inject.Inject;
+import java.net.URL;
 
 /**
  * @author Michael Yang 杨福海 （fuhai999@gmail.com）
@@ -53,20 +56,36 @@ public class AttachmentController extends UserControllerBase {
             return;
         }
 
-        String path = AttachmentUtils.moveFile(uploadFile);
-        AliyunOssUtils.upload(path, AttachmentUtils.file(path));
+        String path = AttachmentUtils.moveFile(uploadFile).replace("\\", "/");
+
+        boolean enable = Boolean.parseBoolean(JPressConsts.OSS_KEY_ENABLE);
+        if (enable == false || StrUtils.isBlank(path)) {
+            //不同步到oss,保存到本地
+            Attachment attachment = new Attachment();
+            attachment.setUserId(getLoginedUser().getId());
+            attachment.setTitle(uploadFile.getOriginalFileName());
+            attachment.setPath(path);
+            attachment.setSuffix(FileUtils.getSuffix(uploadFile.getFileName()));
+            attachment.setMimeType(uploadFile.getContentType());
+            as.save(attachment);
+            renderJson(Ret.ok().set("success", true).set("src", attachment.getPath()));
+        }else {
+            boolean success = AliyunOssUtils.upload(path, AttachmentUtils.file(path));
+            if(!success){
+                renderJson(Ret.ok().set("success", false));
+            }
+            String ossurl = JPressConsts.OSS_KEY_ENDPOINT;
+            if(ossurl.contains("http://")){
+                ossurl = ossurl.replace("http://","http://"+JPressConsts.OSS_KEY_BUCKETNAME+".");
+            }
+            if(ossurl.contains("https://")){
+                ossurl = ossurl.replace("https://","https://"+JPressConsts.OSS_KEY_BUCKETNAME+".");
+            }
+            ossurl = ossurl+path;
+            renderJson(Ret.ok().set("success", true).set("src", ossurl));
+        }
 
 
-        Attachment attachment = new Attachment();
-        attachment.setUserId(getLoginedUser().getId());
-        attachment.setTitle(uploadFile.getOriginalFileName());
-        attachment.setPath(path.replace("\\", "/"));
-        attachment.setSuffix(FileUtils.getSuffix(uploadFile.getFileName()));
-        attachment.setMimeType(uploadFile.getContentType());
-
-        as.save(attachment);
-
-        renderJson(Ret.ok().set("success", true).set("src", attachment.getPath()));
     }
 
 

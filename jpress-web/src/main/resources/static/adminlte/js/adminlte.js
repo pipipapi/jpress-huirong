@@ -74,7 +74,8 @@ throw new Error('AdminLTE requires jQuery')
       }
       this.options.onLoadDone.call($(this), response);
       this._removeOverlay();
-    }.bind(this), this.options.responseType !== '' && this.options.responseType);
+    //}.bind(this), this.options.responseType !== '' && this.options.responseType);
+    }.bind(this), '');
   };
 
   // Private

@@ -28,6 +28,17 @@ public class JPressConsts {
     public static final String VERSION = "v1.0-rc.7";
 
     /**
+     * OSS配置
+     */
+    public static final String OSS_KEY_ENABLE = "true";
+    public static final String OSS_KEY_ENDPOINT = "http://oss-cn-hangzhou.aliyuncs.com";
+    //                                   https://bkt-john.oss-cn-hangzhou.aliyuncs.com/attachment%5C20181121%5C6f7ffae3b13b45c1aa6c6f9e42ca4630.png
+
+    public static final String OSS_KEY_ACCESSKEYID = "7VdWFRlSmcESQOSL";
+    public static final String OSS_KEY_ACCESSKEYSECRET = "fRe4Vh1IsOrjjjY85oeOOBaWvu9lhf";
+    public static final String OSS_KEY_BUCKETNAME = "bkt-john";
+
+    /**
      * 后台系统菜单的 ID
      */
     public static final String SYSTEM_MENU_USER = "user";
