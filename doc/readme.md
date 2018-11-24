@@ -667,7 +667,7 @@ JPress 是一个内置了几乎任何互联网系统都必须模块：
 public class PageModuleGenerator {
 
 
-    private static String dbUrl = "jdbc:mysql://127.0.0.1:3306/newjpress";
+    private static String dbUrl = "jdbc:mysql://127.0.0.1:3306/newjpress?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
     private static String dbUser = "root";
     private static String dbPassword = "";
 

@@ -15,8 +15,11 @@
  */
 package io.jpress.web.admin;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HashKit;
+import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -49,6 +52,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -116,17 +120,18 @@ public class _UserController extends AdminControllerBase {
      * 返回用户的用户名
      */
     public void generatorLoginName(){
-        String realname=getPara("realname");
-        if(StrUtils.isBlank(realname)){
+        JSONObject params= JSON.parseObject(HttpKit.readData(getRequest()));
+        if(params==null || params.get("realname") == null){
             renderJson(Ret.fail().set("message", "姓名为空").set("errorCode", 10));
         }
-        String username = PingyinUtil.hanziToPinyin(realname);
+        String username = PingyinUtil.hanziToPinyin(params.getString("realname")).toLowerCase();
         User user = userService.findFistByUsername(username);
         if(ObjectUtils.equals(null, user)){
             renderJson(Ret.ok().set("username", username));
         }else{
             renderJson(Ret.fail().set("message", "该用户名已经存在").set("errorCode", 10));
         }
+        return;
     }
 
 

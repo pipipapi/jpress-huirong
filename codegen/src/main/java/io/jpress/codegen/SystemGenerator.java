@@ -41,7 +41,7 @@ public class SystemGenerator {
 
         String dbTables = "user,attachment,menu,option,payment_record,permission,role,utm,wechat_menu,wechat_reply";
 
-        Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/newjpress");
+        Jboot.setBootArg("jboot.datasource.url", "jdbc:mysql://127.0.0.1:3306/newjpress?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8");
         Jboot.setBootArg("jboot.datasource.user", "root");
 
         String modelPackage = "io.jpress.model";

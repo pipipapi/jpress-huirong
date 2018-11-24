@@ -11,16 +11,30 @@
     });
 
     $("#generatorLoginName").on("click",function () {
-        $.get(
-            "#(CPATH)/admin/user/generatorLoginName",
-            {realname: $("input[name='user.realname']").val()},
-            function(data, status, jqxhr) {
-                console.log(JSON.stringify(data))
+        var realname=$("input[name='user.realname']").val();
+        $.ajax({
+            type: "post",
+            url: "#(CPATH)/admin/user/generatorLoginName",
+            contentType: "application/json; charset=UTF-8",
+            async: true, //这里指定值时不能加双引号(会设置无效)
+            dataType:"json",
+            data: JSON.stringify({
+                realname: realname,
+                random:1
+            }),
+            success:function (data, textStatus, jqXHR) {
+                if(data.state='ok') {
+                    $("input[name='user.username']").val(data.username);
+                }else{
+                    toastr.error(data.message, '操作失败');
+                }
+            },
+            error:function (jqXHR, textStatus, errorThrown ) {
+                console.log(errorThrown);
             }
-        ).fail(function () {
-            alert('系统繁忙');
-        });;
+        });
     })
+
 
 </script>
 #end

@@ -148,6 +148,10 @@ function initCkEdtior(editor, height) {
         language: 'zh-cn'
     });
 
+    ed.on("paste", function (event) {
+        alert(event.data.dataValue);
+    })
+
     ed.on("dialogShow", function (event) {
         if (_dialogShowEvent != null) {
             return;
@@ -172,6 +176,21 @@ function initCkEdtior(editor, height) {
         })
 
     });
+
+    // var notification = new CKEDITOR.plugins.notification(ed, {message: '文件上传提示'});
+    // notification.show();
+    // var aggregator;
+    //
+    // if(!aggregator||aggregator.isFinished()){
+    //     aggregator=new CKEDITOR.plugins.notificationAggregator(editor, 'loading process ,step {current} of m{max}...');
+    //     aggregator.on('finished', function (data) {
+    //         console.log("上传回调事件的result:"+JSON.stringify(data));
+    //         aggregator.notification.update({
+    //             message:'完成',
+    //             type:'success'
+    //         })
+    //     })
+    // }
 
     return ed;
 }
