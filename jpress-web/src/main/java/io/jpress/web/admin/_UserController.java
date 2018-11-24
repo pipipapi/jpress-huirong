@@ -30,6 +30,7 @@ import io.jpress.JPressConsts;
 import io.jpress.commons.utils.AliyunOssUtils;
 import io.jpress.commons.utils.AttachmentUtils;
 import io.jpress.commons.utils.ImageUtils;
+import io.jpress.commons.utils.PingyinUtil;
 import io.jpress.core.menu.annotation.AdminMenu;
 import io.jpress.model.Permission;
 import io.jpress.model.Role;
@@ -41,6 +42,8 @@ import io.jpress.service.UserService;
 import io.jpress.service.UtmService;
 import io.jpress.web.admin.kits.PermissionKits;
 import io.jpress.web.base.AdminControllerBase;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import org.apache.commons.lang.ObjectUtils;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -108,6 +111,24 @@ public class _UserController extends AdminControllerBase {
     public void edit() {
         render("user/edit.html");
     }
+
+    /**
+     * 返回用户的用户名
+     */
+    public void generatorLoginName(){
+        String realname=getPara("realname");
+        if(StrUtils.isBlank(realname)){
+            renderJson(Ret.fail().set("message", "姓名为空").set("errorCode", 10));
+        }
+        String username = PingyinUtil.hanziToPinyin(realname);
+        User user = userService.findFistByUsername(username);
+        if(ObjectUtils.equals(null, user)){
+            renderJson(Ret.ok().set("username", username));
+        }else{
+            renderJson(Ret.fail().set("message", "该用户名已经存在").set("errorCode", 10));
+        }
+    }
+
 
     /**
      * 新增用户

@@ -141,6 +141,7 @@ function initCkEdtior(editor, height) {
         autoUpdateElement: true,
         extraPlugins: 'codesnippet',
         codeSnippet_theme: 'monokai_sublime',
+        removePlugins:'elementspath,resize',
         height: height,
         filebrowserImageUploadUrl: jpress.cpath + '/commons/ckeditor/upload',
         filebrowserBrowseUrl: jpress.cpath + '/admin/attachment/browse',

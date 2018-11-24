@@ -10,6 +10,18 @@
         return false;
     });
 
+    $("#generatorLoginName").on("click",function () {
+        $.get(
+            "#(CPATH)/admin/user/generatorLoginName",
+            {realname: $("input[name='user.realname']").val()},
+            function(data, status, jqxhr) {
+                console.log(JSON.stringify(data))
+            }
+        ).fail(function () {
+            alert('系统繁忙');
+        });;
+    })
+
 </script>
 #end
 
@@ -41,7 +53,10 @@
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" placeholder="此项用于登录"
                                            name="user.username">
-                                    <p class="help-block"> 登录名不支持修改 </p>
+                                    <p class="help-block">
+                                        登录名不支持修改
+                                        <input type="button" id="generatorLoginName" value="用姓名生成登录名称" />
+                                    </p>
 
                                 </div>
                             </div>
@@ -50,6 +65,13 @@
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" placeholder="昵称..."
                                            name="user.nickname">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">姓名</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" placeholder="姓名..." name="user.realname">
                                 </div>
                             </div>
 
