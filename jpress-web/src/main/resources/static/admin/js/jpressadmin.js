@@ -148,9 +148,9 @@ function initCkEdtior(editor, height) {
         language: 'zh-cn'
     });
 
-    ed.on("paste", function (event) {
-        alert(event.data.dataValue);
-    })
+    // ed.on("paste", function (event) {
+    //     alert(event.data.dataValue);
+    // })
 
     ed.on("dialogShow", function (event) {
         if (_dialogShowEvent != null) {
@@ -191,7 +191,41 @@ function initCkEdtior(editor, height) {
     //         })
     //     })
     // }
-
+    // function textCallback( range ) {
+    //     // You do not want to autocomplete a non-empty selection.
+    //     if ( !range.collapsed ) {
+    //         return null;
+    //     }
+    //
+    //     // Use the text match plugin which does the tricky job of doing
+    //     // a text search in the DOM. The matchCallback function should return
+    //     // a matching fragment of the text.
+    //     return CKEDITOR.plugins.textMatch.match( range, matchCallback );
+    // }
+    //
+    // function matchCallback( text, offset ) {
+    //     // Get the text before the caret.
+    //     var left = text.slice( 0, offset ),
+    //         // Will look for an '@' character followed by word characters.
+    //         match = left.match( /@\w*$/ );
+    //
+    //     if ( !match ) {
+    //         return null;
+    //     }
+    //     return { start: match.index, end: offset };
+    // }
+    //
+    // // Initialize the text watcher.
+    // var textWatcher = new CKEDITOR.plugins.textWatcher( ed, textCallback );
+    // // Start listening.
+    // textWatcher.attach();
+    //
+    // // Handle text matching.
+    // textWatcher.on( 'matched', function( evt ) {
+    //     alert("matchCallback-evt-text"+evt.data.text);
+    //
+    //     autocomplete.setQuery( evt.data.text );
+    // } );
     return ed;
 }
 
