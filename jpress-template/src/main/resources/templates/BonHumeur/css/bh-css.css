@@ -1,10 +1,11 @@
 /*global*/
 a{
-    color:#333;
+    color: rgba(91, 27, 139, 0.56);
+    text-decoration:underline;
 }
 a:hover{
     color:#107AB1;
-    text-decoration: none;
+    text-decoration: underline;
 }
 /*index*/
 .bh-content{
